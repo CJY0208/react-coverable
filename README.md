@@ -4,7 +4,9 @@
 [![size](https://img.shields.io/bundlephobia/minzip/react-coverable@latest.svg)](https://bundlephobia.com/result?p=react-coverable@latest)
 ![](https://komarev.com/ghpvc/?username=cjy0208-react-coverable&label=VIEWS)
 
-编写可重写的 react 组件 props
+Write rewritable react component props to make complex components customizable
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/vitejs-vite-vt5nvd?file=src%2FApp.tsx)
 
 ## Usage
 

@@ -46,6 +46,7 @@
     ]
   },
   "dependencies": {
+    "@babel/runtime": "^7.13.10",
     "@fexd/tools": "^0.1.4",
     "ahooks": "^3",
     "lodash": "^4",
