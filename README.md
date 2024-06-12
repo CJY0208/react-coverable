@@ -8,7 +8,7 @@ Write rewritable react component props to make complex components customizable
 
 ## Demo
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/vitejs-vite-vt5nvd?file=src%2FApp.tsx)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/react-coverable-demo?file=src%2FApp.tsx)
 
 <img src="./docs/demo.gif">
 
