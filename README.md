@@ -2,7 +2,6 @@
 
 [![NPM version](https://img.shields.io/npm/v/react-coverable.svg?style=flat)](https://npmjs.org/package/react-coverable)
 [![size](https://img.shields.io/bundlephobia/minzip/react-coverable@latest.svg)](https://bundlephobia.com/result?p=react-coverable@latest)
-[![dm](https://img.shields.io/npm/dm/react-coverable.svg)](https://github.com/CJY0208/react-coverable)
 ![](https://komarev.com/ghpvc/?username=cjy0208-react-coverable&label=VIEWS)
 
 编写可重写的 react 组件 props
