@@ -1,9 +1,13 @@
 import { get, isObject, memoize, run } from '@fexd/tools'
-import { useLatest, useMemoizedFn } from 'ahooks'
-import cloneDeep from 'lodash/cloneDeep'
 import { useRef } from 'react'
 
-import { deepConfigItemFilter, deepMap } from './helpers'
+import {
+  cloneDeep,
+  deepConfigItemFilter,
+  deepMap,
+  useLatest,
+  useMemoizedFn,
+} from './helpers'
 import { Coverable } from './types'
 
 export default function useCoverable<T extends Record<string, any>>(

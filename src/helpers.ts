@@ -1,5 +1,5 @@
 import { isArray, isObject, run } from '@fexd/tools'
-import { isValidElement } from 'react'
+import { isValidElement, useCallback, useMemo, useRef, useState } from 'react'
 
 export function deepConfigItemFilter(item) {
   if (isArray(item)) {
@@ -95,4 +95,81 @@ export function deepMerge(
   })
 
   return result
+}
+
+export function cloneDeep<T>(value: T, map = new WeakMap()): T {
+  // Check for non-object values and return them directly
+  if (value === null || typeof value !== 'object') {
+    return value
+  }
+
+  // Handle circular references using WeakMap
+  if (map.has(value)) {
+    return map.get(value)
+  }
+
+  // Handle Array type
+  if (Array.isArray(value)) {
+    const arrCopy: any[] = []
+    map.set(value, arrCopy) // add to map before recursion
+    value.forEach((item, index) => {
+      arrCopy[index] = cloneDeep(item, map)
+    })
+    return arrCopy as unknown as T
+  }
+
+  // Handle Date type
+  if (value instanceof Date) {
+    return new Date(value) as unknown as T
+  }
+
+  // Handle RegExp type
+  if (value instanceof RegExp) {
+    return new RegExp(value.source, value.flags) as unknown as T
+  }
+
+  // Handle Object type
+  const objCopy: { [key: string]: any } = {}
+  map.set(value, objCopy) // add to map before recursion
+  Object.keys(value).forEach((key) => {
+    objCopy[key] = cloneDeep((value as { [key: string]: any })[key], map)
+  })
+  return objCopy as T
+}
+
+export const useUpdate = () => {
+  const [, setState] = useState({})
+
+  return useCallback(() => setState({}), [])
+}
+
+export function useLatest<T>(value: T) {
+  const ref = useRef(value)
+  ref.current = value
+
+  return ref
+}
+
+type noop = (this: any, ...args: any[]) => any
+
+type PickFunction<T extends noop> = (
+  this: ThisParameterType<T>,
+  ...args: Parameters<T>
+) => ReturnType<T>
+
+export function useMemoizedFn<T extends noop>(fn: T) {
+  const fnRef = useRef<T>(fn)
+
+  // why not write `fnRef.current = fn`?
+  // https://github.com/alibaba/hooks/issues/728
+  fnRef.current = useMemo<T>(() => fn, [fn])
+
+  const memoizedFn = useRef<PickFunction<T>>()
+  if (!memoizedFn.current) {
+    memoizedFn.current = function (this, ...args) {
+      return fnRef.current.apply(this, args)
+    }
+  }
+
+  return memoizedFn.current as T
 }

@@ -1,7 +1,7 @@
 {
   "name": "react-coverable",
-  "version": "0.0.1",
-  "description": "编写可重写的 react 组件 props",
+  "version": "0.0.3",
+  "description": "Write rewritable react component props to make complex components customizable",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -48,8 +48,6 @@
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "@fexd/tools": "^0.1.4",
-    "ahooks": "^3",
-    "lodash": "^4",
     "utility-types": "^3"
   },
   "devDependencies": {
@@ -58,6 +56,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@umijs/lint": "^4.0.0",
+    "babel-plugin-import": "^1.13.3",
     "dumi": "^2.3.0",
     "father": "^4.1.0",
     "husky": "^8.0.1",

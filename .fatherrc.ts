@@ -12,4 +12,16 @@ export default defineConfig({
     platform: 'browser',
     transformer: 'babel',
   },
+
+  extraBabelPlugins: [
+    [
+      'babel-plugin-import',
+      {
+        libraryName: '@fexd/tools',
+        camel2DashComponentName: false,
+        libraryDirectory: 'es',
+      },
+      '@fexd/tools',
+    ],
+  ],
 })

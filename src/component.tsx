@@ -1,8 +1,7 @@
 import { get, isFunction, run } from '@fexd/tools'
-import { useMemoizedFn, useUpdate } from 'ahooks'
 import React, { forwardRef, useMemo, useRef } from 'react'
 
-import { deepMap } from './helpers'
+import { deepMap, useMemoizedFn, useUpdate } from './helpers'
 import { CoverableMark, CoverableProps } from './types'
 
 export default function createComponent<
