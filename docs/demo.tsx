@@ -70,7 +70,6 @@ function Demo() {
               c: 2,
             },
           },
-
           config2: {
             key: 66,
           },
