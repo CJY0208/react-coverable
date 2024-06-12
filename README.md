@@ -15,19 +15,23 @@ import React from 'react'
 import { useCoverable } from 'react-coverable'
 
 const CoverableComponent = useCoverable.component(
-  (props: { normalProp: number }) => {
+  (props: { normalProp: number }, ref: any) => {
     const config1 = useCoverable({
       a: 1,
       b: 2,
+      // custom rewrite process
       test: useCoverable.value({
+        // default value
         default: {
           a: 1,
           b: 2,
         },
+        // configuration item, only used to extract types
         config: {
           c: 3,
           d: 2,
         },
+        // the process of merging configuration items and default values
         onCovered: (current, config) => {
           return {
             ...current,
@@ -71,6 +75,7 @@ function Demo() {
     <>
       <CoverableComponent
         normalProp={random}
+        // modify the configuration through the coverable prop
         coverable={{
           config1: {
             b: 44,
