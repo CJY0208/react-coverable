@@ -4,8 +4,15 @@ import { useCoverable } from 'react-coverable'
 const CoverableComponent = useCoverable.component(
   (props: { normalProp: number }, ref: any) => {
     const config1 = useCoverable({
-      a: 1,
-      b: 2,
+      a: {
+        b: {
+          c: {
+            d: 1,
+            e: 2,
+          },
+          f: 3,
+        },
+      },
       // custom rewrite process
       test: useCoverable.value({
         // default value
@@ -21,19 +28,14 @@ const CoverableComponent = useCoverable.component(
         // the process of merging configuration items and default values
         onCovered: (current, config) => {
           return {
-            ...current,
             ...config,
+            ...current,
           }
         },
       }),
     })
 
     const config2 = useCoverable({
-      key: 1,
-      value: 2,
-    })
-
-    const config3 = useCoverable({
       bar: 'bar',
       foo: 'foo',
     })
@@ -42,49 +44,54 @@ const CoverableComponent = useCoverable.component(
       .props({
         config1,
         config2,
-        config3,
       })
       .render(() => (
-        <>
-          <div>{JSON.stringify(props)}</div>
-          <div>{JSON.stringify(config1?.getConfig())}</div>
-          <div>{JSON.stringify(config2?.getConfig())}</div>
-          <div>{JSON.stringify(config3?.getConfig())}</div>
-        </>
+        <div style={{ whiteSpace: 'break-spaces' }}>
+          <h3>props</h3>
+          <div>{JSON.stringify(props, null, 2)}</div>
+
+          <h3>config1</h3>
+          <div>{JSON.stringify(config1?.getConfig(), null, 2)}</div>
+
+          <h3>config2</h3>
+          <div>{JSON.stringify(config2?.getConfig(), null, 2)}</div>
+        </div>
       ))
   },
 )
 
 function Demo() {
-  const [random, setRandom] = React.useState(Math.random)
+  const [random, setRandom] = React.useState<undefined | number>(undefined)
 
   return (
     <>
+      <button onClick={() => setRandom(Math.random)}>cover some props</button>
       <CoverableComponent
-        normalProp={random}
+        normalProp={random ?? 0}
         // modify the configuration through the coverable prop
-        coverable={{
-          config1: {
-            b: 44,
-            test: {
-              c: 2,
-            },
-          },
-          config2: {
-            key: 66,
-          },
-          config3: {
-            foo: String(random),
-          },
-        }}
+        coverable={
+          !random
+            ? {}
+            : {
+                config1: {
+                  a: {
+                    b: {
+                      c: {
+                        d: random,
+                      },
+                      f: 66,
+                    },
+                  },
+                  test: {
+                    c: 2,
+                  },
+                },
+                config2: {
+                  foo: String(random),
+                },
+              }
+        }
       />
-      <button
-        onClick={() => {
-          setRandom(Math.random)
-        }}
-      >
-        random
-      </button>
     </>
   )
 }
