@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "@@/*": [".dumi/tmp/*"],
+      "react-coverable": ["src"],
+      "react-coverable/*": ["src/*", "*"]
+    }
+  },
+  "include": [".dumirc.ts", "src", "docs", ".dumi"],
+  "exclude": ["node_modules", "dist"]
+}
