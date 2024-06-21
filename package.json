@@ -1,6 +1,6 @@
 {
   "name": "react-coverable",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Write rewritable react component props to make complex components customizable",
   "license": "MIT",
   "main": "lib/index.js",
