@@ -38,11 +38,11 @@ jobs:
 
     - name: Build
       if: steps.check.outputs.changed == 'true'
-      run: 'git config --global --add safe.directory /github/workspace && sudo npm run build'
+      run: 'sudo npm run build'
 
     - name: Publish
       if: steps.check.outputs.changed == 'true'
-      uses: pascalgn/npm-publish-action@1.2.0
+      uses: pascalgn/npm-publish-action@latest
       with:
         commit_pattern: "^Release (\\S+)"
       env:
