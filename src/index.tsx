@@ -8,5 +8,5 @@ export const useCoverable = Object.assign(rawUseCoverable, {
   props,
   value,
 })
-
+export * from './types'
 export default useCoverable

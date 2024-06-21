@@ -1,3 +1,4 @@
+import { ReactChild, ReactElement, ReactNode, ReactPortal } from 'react'
 import { DeepPartial, Required } from 'utility-types'
 
 export type CoverableMark<T> = {
@@ -14,11 +15,27 @@ export interface CoverableValue<V, T> extends CoverableValueConfig<V, T> {
   __isCoverableValue: () => true
 }
 
+export type ExcludeCoverableTypes =
+  | ((...args: any) => any)
+  | Array<any>
+  | null
+  | undefined
+  | number
+  | string
+  | boolean
+  | symbol
+  | bigint
+  | ReactChild
+  | ReactPortal
+  | Iterable<ReactNode>
+  | JSX.Element
+  | ReactElement
+
 export type DeepCoverable<T> = {
-  [K in keyof T]: T[K] extends CoverableValue<any, any>
-    ? Required<T[K]>['default']
-    : T extends Array<any>
+  [K in keyof T]: T[K] extends ExcludeCoverableTypes
     ? T[K]
+    : T[K] extends CoverableValue<any, any>
+    ? Required<T[K]>['default']
     : T[K] extends object
     ? DeepCoverable<T[K]>
     : T[K]
@@ -29,12 +46,12 @@ export type Coverable<T> = {
 } & CoverableMark<T>
 
 export type CoverableProps<T> = {
-  [K in keyof T]?: T[K] extends CoverableMark<any>
+  [K in keyof T]?: T[K] extends ExcludeCoverableTypes
+    ? T[K]
+    : T[K] extends CoverableMark<any>
     ? CoverableProps<T[K]['__T__']>
     : T[K] extends CoverableValue<any, any>
     ? DeepPartial<T[K]['config']>
-    : T extends Array<any>
-    ? T[K]
     : T[K] extends object
     ? DeepPartial<CoverableProps<T[K]>>
     : T[K]

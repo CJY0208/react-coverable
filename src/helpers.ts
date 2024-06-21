@@ -150,14 +150,14 @@ export function useLatest<T>(value: T) {
   return ref
 }
 
-type noop = (this: any, ...args: any[]) => any
+type NOOP = (this: any, ...args: any[]) => any
 
-type PickFunction<T extends noop> = (
+type PickFunction<T extends NOOP> = (
   this: ThisParameterType<T>,
   ...args: Parameters<T>
 ) => ReturnType<T>
 
-export function useMemoizedFn<T extends noop>(fn: T) {
+export function useMemoizedFn<T extends NOOP>(fn: T) {
   const fnRef = useRef<T>(fn)
 
   // why not write `fnRef.current = fn`?
