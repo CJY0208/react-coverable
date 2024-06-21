@@ -14,7 +14,7 @@
   "scripts": {
     "build": "father build",
     "build:watch": "father dev",
-    "dev": "dumi dev",
+    "dev": "dumi setup && dumi dev",
     "docs:build": "dumi build",
     "docs:preview": "dumi preview",
     "doctor": "father doctor",
@@ -22,7 +22,7 @@
     "lint": "npm run lint:es && npm run lint:css",
     "lint:css": "stylelint \"{src,test}/**/*.{css,less}\"",
     "lint:es": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\"",
-    "prepare": "husky install && dumi setup",
+    "prepare": "husky install",
     "start": "npm run dev"
   },
   "commitlint": {
