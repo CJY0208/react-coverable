@@ -17,7 +17,7 @@ export interface CoverableValue<V, T> extends CoverableValueConfig<V, T> {
 
 export type ExcludeCoverableTypes =
   | ((...args: any) => any)
-  | Array<any>
+  | any[]
   | null
   | undefined
   | number
@@ -56,3 +56,18 @@ export type CoverableProps<T> = {
     ? DeepPartial<CoverableProps<T[K]>>
     : T[K]
 }
+
+export type DefaultCoverableConfig<T> = {
+  readonly [K in keyof T]: T[K] extends ExcludeCoverableTypes
+    ? T[K]
+    : T[K] extends CoverableMark<any>
+    ? DefaultCoverableConfig<Required<T[K]>['__T__']>
+    : T[K] extends CoverableValue<any, any>
+    ? Readonly<Required<T[K]>['default']>
+    : T[K] extends object
+    ? DefaultCoverableConfig<T[K]>
+    : T[K]
+}
+
+// export type CurrentCoverableProps<T> = CoverableProps<T extends CoverableMark<any> ? T & T['__T__'] : T>
+// export type DefaultConfig<T> = DefaultCoverableConfig<T extends CoverableMark<any> ? T & T['__T__'] : T>

@@ -1,8 +1,9 @@
 import { get, isFunction, run } from '@fexd/tools'
 import React, { forwardRef, useMemo, useRef } from 'react'
+// import ReactDOM from 'react-dom/server'
 
 import { deepMap, useMemoizedFn, useUpdate } from './helpers'
-import { CoverableMark, CoverableProps } from './types'
+import { CoverableMark, CoverableProps, DefaultCoverableConfig } from './types'
 
 export default function createComponent<
   Props extends Record<string, any> & { coverable?: never },
@@ -13,7 +14,8 @@ export default function createComponent<
     props: Props,
     ref: Ref,
   ) => {
-    coverableProps: T
+    getDefaultCoverableConfig?: () => any
+    coverableConfig: T
     content: any
   },
   {
@@ -25,36 +27,60 @@ export default function createComponent<
   } = {},
 ) {
   const Comp = React.memo(
-    forwardRef(({ coverable, ...props }: any, ref: any) => {
+    forwardRef(({ coverable: getCoverableProps, ...props }: any, ref: any) => {
       const triggerRender = useUpdate()
-      const updateMapRef = useRef<any>([])
+      const updateKeyPathMapRef = useRef<any>([])
+      const getCoverableConfigRef = useRef<any>(() => null)
+      const getDefaultCoverableConfigRef = useRef<any>(() => null)
       const updateConfig = useMemoizedFn(() => {
-        updateMapRef.current.map(([coverableProp, keyPath]) => {
-          const overrideConfig = get(coverable, keyPath)
+        const defaultCoverableConfig = run(getDefaultCoverableConfigRef.current)
+        const fullCoverableConfig = run(getCoverableConfigRef.current)
+        if ([defaultCoverableConfig, fullCoverableConfig].includes(null)) {
+          return
+        }
+        const coverableProps = run(
+          getCoverableProps,
+          undefined,
+          defaultCoverableConfig,
+        )
+
+        console.log('updateKeyPathMapRef.current', updateKeyPathMapRef.current)
+        updateKeyPathMapRef.current.map((keyPath) => {
+          const coverableConfig = get(fullCoverableConfig, keyPath)
+          const overrideConfig = get(coverableProps, keyPath)
           if (overrideConfig) {
-            run(coverableProp, '__cover', overrideConfig)
+            run(coverableConfig, '__cover', overrideConfig)
           }
         })
       })
-      React.useMemo(updateConfig, [coverable])
-
-      const { content, coverableProps } = useContent(props as Props, ref)
+      React.useMemo(updateConfig, [getCoverableProps])
+      const { content, coverableConfig, getDefaultCoverableConfig } =
+        useContent(props as Props, ref)
 
       useMemo(() => {
-        deepMap(coverableProps, (item, key, keyPath) => {
+        let isConfigReaded = false
+        deepMap(coverableConfig, (item, key, keyPath) => {
           if (key && item?.__isCoverableProps) {
-            updateMapRef.current.push([item, keyPath])
+            updateKeyPathMapRef.current.push(keyPath)
+            if (run(item?.__isConfigReaded)) {
+              isConfigReaded = true
+            }
           }
 
           return [true, item]
         })
 
-        if ((coverableProps as any)?.__isCoverableProps) {
-          updateMapRef.current.push([coverableProps, []])
+        if ((coverableConfig as any)?.__isCoverableProps) {
+          updateKeyPathMapRef.current.push([[]])
+          if (run((coverableConfig as any)?.__isConfigReaded)) {
+            isConfigReaded = true
+          }
         }
 
+        getDefaultCoverableConfigRef.current = getDefaultCoverableConfig
+        getCoverableConfigRef.current = () => coverableConfig
         updateConfig()
-        if (!isFunction(content)) {
+        if (!isFunction(content) || isConfigReaded) {
           triggerRender()
         }
       }, [])
@@ -67,21 +93,38 @@ export default function createComponent<
   Comp.displayName = useContent?.name
   Comp.defaultProps = { ...defaultProps } as any
 
+  // if (!stableExec) {
+  //   try {
+  //     ReactDOM.renderToString(<Comp __prevRender__ />)
+  //     prevRenderSuccess = true
+  //     console.log({
+  //       prevRender__updateKeyPathMapRef,
+  //       prevRender__getCoverableConfigRef,
+  //       prevRender__getDefaultCoverableConfigRef,
+  //     })
+  //   } catch (e) {
+  //     // console.log(e)
+  //   }
+  // }
+
+  type CurrentCoverableProps = CoverableProps<
+    T extends CoverableMark<any> ? T & T['__T__'] : T
+  >
+  type DefaultConfig = DefaultCoverableConfig<
+    T extends CoverableMark<any> ? T & T['__T__'] : T
+  >
+
   return Comp as React.FC<
     Omit<Props, 'coverable'> & {
       ref?: Ref
-      coverable?: CoverableProps<
-        T extends CoverableMark<any> ? T & T['__T__'] : T
-      >
+      coverable?:
+        | CurrentCoverableProps
+        | ((defaultConfig: DefaultConfig) => CurrentCoverableProps)
     }
   > & {
     defaultProps: Omit<Props, 'coverable'> & {
-      coverable?: CoverableProps<
-        T extends CoverableMark<any> ? T & T['__T__'] : T
-      >
+      coverable?: CurrentCoverableProps
     }
-    coverableProps: CoverableProps<
-      T extends CoverableMark<any> ? T & T['__T__'] : T
-    >
+    coverableProps: CurrentCoverableProps
   }
 }

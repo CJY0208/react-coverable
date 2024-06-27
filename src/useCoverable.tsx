@@ -18,11 +18,18 @@ export default function useCoverable<T extends Record<string, any>>(
   const useConfig = run(configRef.current, undefined, {
     getConfig: () => run(getFinalConfigRef.current),
   }) as T
+  const getDefaultConfigRef = useRef<any>({})
+  getDefaultConfigRef.current = useMemoizedFn(
+    memoize(() => {
+      const defaultConfig = cloneDeep(useConfig ?? {})
+      return defaultConfig
+    }) as any,
+  )
 
   const overridedConfigRef = useRef<any>({})
   const override = (config) => (overridedConfigRef.current = cloneDeep(config))
   getFinalConfigRef.current = memoize(() => {
-    const defaultConfig = cloneDeep(useConfig ?? {})
+    const defaultConfig = getDefaultConfigRef.current()
 
     const handledCoverableMark = new Map()
     const mergedConfig = deepMap(defaultConfig, handleItem)
@@ -60,11 +67,17 @@ export default function useCoverable<T extends Record<string, any>>(
     return mergedConfig
   })
 
-  const getConfig = useMemoizedFn(() => getFinalConfigRef.current() as T)
+  const configReadedRef = useRef(false)
+  const getConfig = useMemoizedFn(() => {
+    configReadedRef.current = true
+    return getFinalConfigRef.current() as T
+  })
 
   return {
     getConfig,
+    __getRawConfig: () => getDefaultConfigRef.current(),
     __isCoverableProps: () => true,
+    __isConfigReaded: () => configReadedRef.current,
     __cover: override,
   } as any as Coverable<T>
 }
