@@ -1,6 +1,6 @@
 import { run, set } from '@fexd/tools'
 
-import { deepMap } from './helpers'
+import { deepConfigItemFilter, deepMap } from './helpers'
 
 export default function createPropsRender<T>(coverableConfig: T) {
   return {
@@ -22,12 +22,23 @@ export default function createPropsRender<T>(coverableConfig: T) {
           return [true, item]
         })
 
+        // return defaultProps
+
+        const handledMark = new Map()
+
         return deepMap(defaultProps as any, (item, key, keyPath) => {
+          // 过滤已处理的项
+          if (handledMark.has(item)) {
+            return [false, item]
+          }
+
           if (key && item?.__isCoverableValue) {
+            handledMark.set(item?.default, true)
             return [false, item?.default]
           }
 
-          return [true, item]
+          const canMerge = deepConfigItemFilter(item)
+          return [canMerge, item]
         })
       },
     }),

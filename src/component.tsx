@@ -44,9 +44,12 @@ export default function createComponent<
           defaultCoverableConfig,
         )
 
-        console.log('updateKeyPathMapRef.current', updateKeyPathMapRef.current)
         updateKeyPathMapRef.current.map((keyPath) => {
-          const coverableConfig = get(fullCoverableConfig, keyPath)
+          const coverableConfig =
+            keyPath?.length === 0
+              ? fullCoverableConfig
+              : get(fullCoverableConfig, keyPath)
+
           const overrideConfig = get(coverableProps, keyPath)
           if (overrideConfig) {
             run(coverableConfig, '__cover', overrideConfig)
@@ -71,7 +74,7 @@ export default function createComponent<
         })
 
         if ((coverableConfig as any)?.__isCoverableProps) {
-          updateKeyPathMapRef.current.push([[]])
+          updateKeyPathMapRef.current.push([])
           if (run((coverableConfig as any)?.__isConfigReaded)) {
             isConfigReaded = true
           }
