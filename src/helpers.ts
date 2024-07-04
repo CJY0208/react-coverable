@@ -1,9 +1,15 @@
 import { isArray, isObject, run } from '@fexd/tools'
-import { isValidElement, useCallback, useMemo, useRef, useState } from 'react'
+import React, {
+  isValidElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
-export function deepConfigItemFilter(item) {
+export function deepItemFilter(item) {
   if (isArray(item)) {
-    return false
+    return true
   }
 
   if (item?.$$typeof) {
@@ -35,7 +41,7 @@ export function deepMap<T>(
         item,
         i,
         keyPath.concat([i]),
-        newArray as T,
+        input as T,
       ) ?? [true, item]
       if (
         continueDeep &&
@@ -56,7 +62,7 @@ export function deepMap<T>(
           item,
           key,
           keyPath.concat([key]),
-          newObject as T,
+          input as T,
         ) ?? [true, item]
         if (
           continueDeep &&
@@ -76,31 +82,49 @@ export function deepMap<T>(
 }
 
 export function deepMerge(
-  obj1: any,
-  obj2: any,
-  filter?: (value: any, key: string) => boolean,
-) {
-  const result: any = {}
+  target: any,
+  source: any,
+  filter: (value: any, key: string) => boolean = () => true,
+): any {
+  if ((!isObject(target) && !isArray(target)) || !isObject(source)) {
+    return cloneDeep(source ?? target)
+  }
 
-  ;[obj1, obj2].forEach((arg) => {
-    if (isObject(arg)) {
-      Object.entries(arg).forEach(([key, value]) => {
-        if (isObject(value) && run(filter, undefined, value, key) !== false) {
-          result[key] = deepMerge(result[key], value, filter)
-        } else {
-          result[key] = value
-        }
-      })
+  target = cloneDeep(target)
+
+  Object.keys(source).forEach((key) => {
+    const sourceValue = source[key]
+
+    if (
+      (isObject(sourceValue) || isArray(sourceValue)) &&
+      run(filter, undefined, sourceValue, key) !== false
+    ) {
+      target[key] = deepMerge(target[key], sourceValue)
+    } else {
+      target[key] = sourceValue
     }
   })
 
-  return result
+  return target
 }
+
+export const shallowMerge = (first: any, ...rest: any[]) =>
+  rest.reduce((acc, val) => deepMerge(acc, val, () => false), first) as any
+
+export const builtInMerge = (
+  obj1: any,
+  obj2: any,
+  filter: (value: any, key: string) => boolean = deepItemFilter,
+) => deepMerge(obj1, obj2, filter)
 
 export function cloneDeep<T>(value: T, map = new WeakMap()): T {
   // Check for non-object values and return them directly
   if (value === null || typeof value !== 'object') {
     return value
+  }
+
+  if (React.isValidElement(value)) {
+    return React.cloneElement(value) as T
   }
 
   // Handle circular references using WeakMap
@@ -172,4 +196,8 @@ export function useMemoizedFn<T extends NOOP>(fn: T) {
   }
 
   return memoizedFn.current as T
+}
+
+export function isIterable(value: any): boolean {
+  return isObject(value) || isArray(value)
 }

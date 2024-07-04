@@ -1,5 +1,25 @@
 import { ReactChild, ReactElement, ReactNode, ReactPortal } from 'react'
-import { DeepPartial, Required } from 'utility-types'
+import { Required, ValuesType } from 'utility-types'
+
+export type ToPrimitive<T> = T extends (...args: any) => any
+  ? T
+  : T extends string
+  ? string
+  : T extends number
+  ? number
+  : T extends any[]
+  ? T
+  : T extends boolean
+  ? boolean
+  : T extends object
+  ? ToPrimitiveObject<T>
+  : T
+
+export type ToPrimitiveObject<T> = {
+  [K in keyof T]: T[K] extends object
+    ? ToPrimitiveObject<T[K]>
+    : ToPrimitive<T[K]>
+}
 
 export type CoverableMark<T> = {
   __T__?: T
@@ -15,14 +35,17 @@ export interface CoverableValue<V, T> extends CoverableValueConfig<V, T> {
   __isCoverableValue: () => true
 }
 
-export type ExcludeCoverableTypes =
+type BasicPrimitiveTypes =
   | ((...args: any) => any)
-  | any[]
-  | null
-  | undefined
+  // | any[]
+  // | null
+  // | undefined
   | number
   | string
   | boolean
+
+export type ExcludeCoverableTypes =
+  | BasicPrimitiveTypes
   | symbol
   | bigint
   | ReactChild
@@ -46,14 +69,18 @@ export type Coverable<T> = {
 } & CoverableMark<T>
 
 export type CoverableProps<T> = {
-  [K in keyof T]?: T[K] extends ExcludeCoverableTypes
+  [K in keyof T]?: T[K] extends any[]
+    ? T[K] | Record<number, CoverableProps<ValuesType<T[K]>>>
+    : T[K] extends BasicPrimitiveTypes
+    ? ToPrimitive<T[K]>
+    : T[K] extends ExcludeCoverableTypes
     ? T[K]
     : T[K] extends CoverableMark<any>
     ? CoverableProps<T[K]['__T__']>
     : T[K] extends CoverableValue<any, any>
-    ? DeepPartial<T[K]['config']>
+    ? CoverableProps<T[K]['config']>
     : T[K] extends object
-    ? DeepPartial<CoverableProps<T[K]>>
+    ? CoverableProps<T[K]>
     : T[K]
 }
 

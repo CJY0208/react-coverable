@@ -111,10 +111,11 @@ export default function createComponent<
   // }
 
   type CurrentCoverableProps = CoverableProps<
-    T extends CoverableMark<any> ? T & T['__T__'] : T
+    T extends CoverableMark<any> ? T['__T__'] & T : T
   >
-  type DefaultConfig = DefaultCoverableConfig<
-    T extends CoverableMark<any> ? T & T['__T__'] : T
+  type DefaultConfig = Omit<
+    DefaultCoverableConfig<T extends CoverableMark<any> ? T['__T__'] & T : T>,
+    'getConfig' | '__T__'
   >
 
   return Comp as React.FC<

@@ -1,6 +1,6 @@
 import { run, set } from '@fexd/tools'
 
-import { deepConfigItemFilter, deepMap } from './helpers'
+import { deepItemFilter, deepMap } from './helpers'
 
 export default function createPropsRender<T>(coverableConfig: T) {
   return {
@@ -37,7 +37,7 @@ export default function createPropsRender<T>(coverableConfig: T) {
             return [false, item?.default]
           }
 
-          const canMerge = deepConfigItemFilter(item)
+          const canMerge = deepItemFilter(item)
           return [canMerge, item]
         })
       },
