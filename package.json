@@ -18,6 +18,7 @@
     "docs:build": "dumi build",
     "docs:preview": "dumi preview",
     "doctor": "father doctor",
+    "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,css,scss,less,md,json}\"",
     "init": "npx pnpm install --shamefully-hoist=true",
     "lint": "npm run lint:es && npm run lint:css",
     "lint:css": "stylelint \"{src,test}/**/*.{css,less}\"",

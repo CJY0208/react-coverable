@@ -87,7 +87,7 @@ export function deepMerge(
   filter: (value: any, key: string) => boolean = () => true,
 ): any {
   if ((!isObject(target) && !isArray(target)) || !isObject(source)) {
-    return cloneDeep(source ?? target)
+    return source ?? target
   }
 
   target = cloneDeep(target)

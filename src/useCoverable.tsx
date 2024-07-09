@@ -29,7 +29,7 @@ export default function useCoverable<T extends Record<string, any>>(
   )
 
   const overridedConfigRef = useRef<any>({})
-  const override = (config) => (overridedConfigRef.current = cloneDeep(config))
+  const override = (config) => (overridedConfigRef.current = config)
   getFinalConfigRef.current = memoize(() => {
     const defaultConfig = getDefaultConfigRef.current()
 
