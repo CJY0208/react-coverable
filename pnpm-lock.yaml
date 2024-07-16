@@ -4,7 +4,7 @@ specifiers:
   '@babel/runtime': ^7.13.10
   '@commitlint/cli': ^17.1.2
   '@commitlint/config-conventional': ^17.1.0
-  '@fexd/tools': ^0.1.4
+  '@fexd/tools': ^0.1.6
   '@types/react': ^18.0.0
   '@types/react-dom': ^18.0.0
   '@umijs/lint': ^4.0.0
@@ -13,6 +13,7 @@ specifiers:
   father: ^4.1.0
   husky: ^8.0.1
   lint-staged: ^13.0.3
+  lodash: ^4.17.21
   prettier: ^2.7.1
   prettier-plugin-organize-imports: ^3.0.0
   prettier-plugin-packagejson: ^2.2.18
@@ -22,7 +23,8 @@ specifiers:
 
 dependencies:
   '@babel/runtime': 7.24.7
-  '@fexd/tools': 0.1.4
+  '@fexd/tools': 0.1.6
+  lodash: 4.17.21
   utility-types: 3.11.0
 
 devDependencies:
@@ -1436,8 +1438,8 @@ packages:
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
     dev: true
 
-  /@fexd/tools/0.1.4:
-    resolution: {integrity: sha512-qWXUo43bXDqSR83ulSJs7tjaGp4VqQJa7MOnHVSVQIgqafAU7MV2ttfg6+ds/Y3KC0mqPdNVBdEj60dmWUPTYQ==}
+  /@fexd/tools/0.1.6:
+    resolution: {integrity: sha512-fisAOuSCJYI4tuldymKljMrFIa7gd0k1ChXaL/NPEaZS25U7MO/7qKLr+JhHomGf3rP/DcH1lVMZzm3u7MuG1g==}
     dependencies:
       '@babel/runtime': 7.24.7
       classnames: 2.3.2
@@ -8074,7 +8076,6 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /log-symbols/2.2.0:
     resolution: {integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==}

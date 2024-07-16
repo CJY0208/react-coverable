@@ -1,4 +1,5 @@
 import { isArray, isObject, run } from '@fexd/tools'
+import lodashCloneDeep from 'lodash/cloneDeep'
 import React, {
   isValidElement,
   useCallback,
@@ -117,48 +118,12 @@ export const builtInMerge = (
   filter: (value: any, key: string) => boolean = deepItemFilter,
 ) => deepMerge(obj1, obj2, filter)
 
-export function cloneDeep<T>(value: T, map = new WeakMap()): T {
-  // Check for non-object values and return them directly
-  if (value === null || typeof value !== 'object') {
-    return value
-  }
-
+export function cloneDeep<T>(value: T): T {
   if (React.isValidElement(value)) {
     return React.cloneElement(value) as T
   }
 
-  // Handle circular references using WeakMap
-  if (map.has(value)) {
-    return map.get(value)
-  }
-
-  // Handle Array type
-  if (Array.isArray(value)) {
-    const arrCopy: any[] = []
-    map.set(value, arrCopy) // add to map before recursion
-    value.forEach((item, index) => {
-      arrCopy[index] = cloneDeep(item, map)
-    })
-    return arrCopy as unknown as T
-  }
-
-  // Handle Date type
-  if (value instanceof Date) {
-    return new Date(value) as unknown as T
-  }
-
-  // Handle RegExp type
-  if (value instanceof RegExp) {
-    return new RegExp(value.source, value.flags) as unknown as T
-  }
-
-  // Handle Object type
-  const objCopy: { [key: string]: any } = {}
-  map.set(value, objCopy) // add to map before recursion
-  Object.keys(value).forEach((key) => {
-    objCopy[key] = cloneDeep((value as { [key: string]: any })[key], map)
-  })
-  return objCopy as T
+  return lodashCloneDeep(value) as T
 }
 
 export const useUpdate = () => {
