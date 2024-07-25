@@ -1,4 +1,4 @@
-import { get, isExist, memoize, run } from '@fexd/tools'
+import { get, isExist, isObject, memoize, run } from '@fexd/tools'
 import { useRef } from 'react'
 
 import {
@@ -55,7 +55,7 @@ export default function useCoverable<T extends Record<string, any>>(
       const canMerge =
         deepItemFilter(item) &&
         isIterable(item) &&
-        (isIterable(override) || !isExist(override))
+        (isObject(override) || !isExist(override))
       const result = canMerge
         ? (shallowMerge as any)(
             ...[item, override, deepMap(item, handleItem, keyPath)].filter(
